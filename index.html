@@ -1,260 +1,255 @@
  <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Join - Vision Institute of Science</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Vision Institute of Science - Admission Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #e6f2ff; }
+    .form-box {
+      max-width: 700px; margin: auto; background: #fff; border: 2px solid #003366;
+      padding: 20px; border-radius: 8px;
     }
-    .container {
-      max-width: 850px;
-      margin: 30px auto;
-      background: #fff;
-      border: 3px solid black;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
+    header {
+      display: flex; align-items: center; margin-bottom: 20px;
+      background-color: #003366; padding: 10px; border-radius: 4px;
     }
-    .header {
-      display: flex;
-      align-items: center;
-      background: aqua;
-      padding: 10px 20px;
-      border-bottom: 2px solid black;
-    }
-    .header img {
-      height: 60px;
-      width: 60px;
-      border-radius: 50%;
-      margin-right: 20px;
-    }
-    .header h1 {
-      font-size: 26px;
-      margin: 0;
-      color: black;
-    }
-    form {
-      padding: 20px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #777;
-    }
-    #photoPreview {
-      margin-top: 10px;
-      height: 120px;
-      width: 100px;
-      border: 2px solid black;
-      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
-      object-fit: cover;
-    }
-    button {
-      margin-top: 20px;
-      background: black;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 5px;
+    header img { height: 60px; margin-right: 15px; }
+    header div h2 { color: #fff; margin: 0; font-size: 24px; }
+    header div small { color: #fff; font-size: 14px; }
+    .photo-frame {
+      width: 150px; height: 180px; border: 2px dashed #999; margin: 10px auto;
+      display: flex; align-items: center; justify-content: center; background: #f9f9f9;
       cursor: pointer;
     }
-    .note {
-      color: red;
-      margin-top: 20px;
-      font-weight: bold;
+    .photo-frame img { max-width: 100%; max-height: 100%; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; }
+    input, select, textarea {
+      width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box;
     }
+    button {
+      background-color: #003366; color: #fff; padding: 10px;
+      border: none; cursor: pointer; border-radius: 4px;
+    }
+    button:hover { background-color: #0055aa; }
+    #downloadSection { display: none; text-align: center; margin-top: 20px; }
+    .error { color: red; font-size: 12px; margin-bottom: 10px; display: none; }
   </style>
 </head>
 <body>
+<div class="form-box">
+  <header>
+    <img src="logo.png" alt="Vision Institute Logo">
+    <div>
+      <h2>Vision Institute of Science - Admission Form</h2>
+      <small>Learn with Confidence</small>
+    </div>
+  </header>
 
-<div class="container">
-  <div class="header">
-    <img src="logo.png" alt="Logo" />
-    <h1>Vision Institute of Science</h1>
-  </div>
-
-  <form id="joinForm" action="https://formspree.io/f/myzpwona" method="POST">
-    <label>Upload Passport Size Photo (Optional):</label>
-    <input type="file" id="photo" accept="image/*" capture="environment" />
-    <img id="photoPreview" alt="Preview" />
-
-    <label>Full Name:</label>
-    <input type="text" id="name" name="Full Name" required />
-
-    <label>Surname:</label>
-    <input type="text" id="surname" name="Surname" required />
-
-    <label>Father's Name:</label>
-    <input type="text" id="fatherName" name="Father's Name" required />
-
-    <label>Father's Occupation:</label>
-    <input type="text" id="fatherOccupation" name="Father's Occupation" required />
-
-    <label>Father Mobile No:</label>
-    <input type="text" id="fatherMobile" name="Father Mobile" required />
-
-    <label>Student Mobile No:</label>
-    <input type="text" id="mobile" name="Student Mobile" required />
-
-    <label>Email:</label>
-    <input type="email" id="email" name="Email" required />
-
-    <label>Class:</label>
-    <select id="classSelect" name="Class" required>
-      <option value="">--Select--</option>
+  <!-- ✅ Formspree Email Integration -->
+  <form id="studentForm" method="POST" action="https://formspree.io/f/myzpwona">
+    <label for="firstName">First Name:</label>
+    <input type="text" id="firstName" name="firstName" required>
+    <label for="surname">Surname:</label>
+    <input type="text" id="surname" name="surname" required>
+    <label for="fatherName">Father's Name:</label>
+    <input type="text" id="fatherName" name="fatherName" required>
+    <label for="fatherOccupation">Father's Occupation:</label>
+    <input type="text" id="fatherOccupation" name="fatherOccupation" required>
+    <label for="motherName">Mother's Name:</label>
+    <input type="text" id="motherName" name="motherName" required>
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required>
+    <label for="gender">Gender:</label>
+    <select id="gender" name="gender" required>
+      <option value="">Select</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+    <label for="classSelect">Class:</label>
+    <select id="classSelect" name="class" required>
+      <option value="">Select</option>
       <option value="9">9</option>
       <option value="10">10</option>
       <option value="11">11</option>
       <option value="12">12</option>
     </select>
-
-    <label>Subjects Interested:</label>
-    <select id="subjects" name="Subjects Interested" required>
-      <option value="">--Select Subject--</option>
+    <label for="subjectSelect">Subject:</label>
+    <select id="subjectSelect" name="subject" required>
+      <option value="">Select subject</option>
     </select>
-
-    <label>Home Address:</label>
-    <textarea id="address" name="Home Address" rows="2" required></textarea>
-
-    <button type="submit">Submit & Generate PDF</button>
-    <p class="note">Note: Please submit this form to the office offline.</p>
+    <label for="mobile">Mobile Number:</label>
+    <input type="text" id="mobile" name="mobile" maxlength="10" required>
+    <div id="mobileError" class="error">Mobile number must be 10 digits.</div>
+    <label for="email">Email Address:</label>
+    <input type="email" id="email" name="email" required>
+    <div id="emailError" class="error">Email must end with @gmail.com.</div>
+    <label for="address">Address:</label>
+    <textarea id="address" name="address" rows="3" required></textarea>
+    <label for="photoUpload">Upload Passport Size Photo:</label>
+    <input type="file" accept="image/*" id="photoUpload" style="display: none;">
+    <div class="photo-frame" id="photoPreview" onclick="document.getElementById('photoUpload').click();">Paste photo here</div>
+    <div style="text-align: center;">
+      <button type="button" onclick="document.getElementById('photoUpload').click();">Upload Photo</button>
+    </div><br>
+    <button type="submit">Submit & Notify</button>
   </form>
 </div>
 
+<div id="downloadSection">
+  <button onclick="generatePDF()">Download Filled PDF</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-  const classSelect = document.getElementById("classSelect");
-  const subjects = document.getElementById("subjects");
-  const photoInput = document.getElementById("photo");
-  const photoPreview = document.getElementById("photoPreview");
+  const form = document.getElementById('studentForm');
+  const classSelect = document.getElementById('classSelect');
+  const subjectSelect = document.getElementById('subjectSelect');
+  const photoInput = document.getElementById('photoUpload');
+  const photoPreview = document.getElementById('photoPreview');
+  const mobileError = document.getElementById('mobileError');
+  const emailError = document.getElementById('emailError');
+  let uploadedPhoto = null;
 
-  classSelect.addEventListener("change", () => {
-    subjects.innerHTML = '<option value="">--Select Subject--</option>';
-    const value = classSelect.value;
-    let options = [];
+  const subjectsByClass = {
+    '9': ['Science'],
+    '10': ['Science'],
+    '11': ['Biology', 'Chemistry', 'NEET'],
+    '12': ['Biology', 'NEET Chemistry', 'NEET Biology', 'Crash Course']
+  };
 
-    if (value === "12" || value === "11") {
-      options = ["Chemistry", "Biology", "Organic Chemistry", "NEET Biology", "NEET Chemistry", "Both Biology & Chemistry"];
-    } else if (value === "10" || value === "9") {
-      options = ["Science"];
+  classSelect.addEventListener('change', () => {
+    const selected = classSelect.value;
+    subjectSelect.innerHTML = '<option value="">Select subject</option>';
+    if (subjectsByClass[selected]) {
+      subjectsByClass[selected].forEach(subject => {
+        const option = document.createElement('option');
+        option.value = subject;
+        option.textContent = subject;
+        subjectSelect.appendChild(option);
+      });
     }
-
-    options.forEach(subject => {
-      const opt = document.createElement("option");
-      opt.value = subject;
-      opt.textContent = subject;
-      subjects.appendChild(opt);
-    });
   });
 
-  photoInput.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith("image/")) {
+  photoInput.addEventListener('change', () => {
+    const file = photoInput.files[0];
+    if (file) {
       const reader = new FileReader();
-      reader.onload = function (event) {
-        photoPreview.src = event.target.result;
+      reader.onload = function (e) {
+        uploadedPhoto = e.target.result;
+        photoPreview.innerHTML = `<img src="${uploadedPhoto}" alt="Uploaded Photo">`;
       };
       reader.readAsDataURL(file);
     }
   });
 
-  document.getElementById("joinForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
+  form.addEventListener('submit', function (e) {
+    const mobile = form.elements['mobile'].value;
+    const email = form.elements['email'].value;
 
+    mobileError.style.display = 'none';
+    emailError.style.display = 'none';
+
+    if (!/^[0-9]{10}$/.test(mobile)) {
+      e.preventDefault();
+      mobileError.style.display = 'block';
+      return;
+    }
+    if (!email.endsWith('@gmail.com')) {
+      e.preventDefault();
+      emailError.style.display = 'block';
+      return;
+    }
+
+    document.getElementById('downloadSection').style.display = 'block';
+  });
+
+  async function generatePDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    const f = form.elements;
 
     doc.setDrawColor(0, 0, 0);
-    doc.setLineWidth(1.5);
-    doc.rect(10, 10, 190, 277);
+    doc.rect(10, 10, 190, 275);
 
-    doc.setFillColor(0, 255, 255);
-    doc.rect(10, 10, 190, 20, "F");
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.text("Vision Institute of Science", 105, 23, { align: "center" });
+    doc.setFillColor(0, 51, 102);
+    doc.rect(10, 10, 190, 30, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.text('VISION INSTITUTE OF SCIENCE', 20, 25);
+    doc.setFontSize(10);
+    doc.text('Learn with Confidence', 20, 30);
 
-    const photoSrc = photoPreview.src;
-    const photoY = 32;
-    doc.setDrawColor(0, 0, 0);
-    doc.rect(155, photoY, 40, 50);
-
-    if (photoSrc && !photoSrc.includes("undefined") && photoSrc.length > 20) {
-      doc.addImage(photoSrc, "JPEG", 155, photoY, 40, 50);
-    } else {
-      doc.setFontSize(9);
-      doc.setTextColor(150);
-      doc.text("Paste Photo Here", 175, photoY + 25, { align: "center" });
-    }
-
-    doc.setFontSize(12);
-    doc.setTextColor(0);
-    let y = 45;
-    function line(label, value) {
-      doc.text(`${label}: ${value}`, 15, y);
-      y += 10;
-    }
-
-    line("Full Name", document.getElementById("name").value);
-    line("Surname", document.getElementById("surname").value);
-    line("Father's Name", document.getElementById("fatherName").value);
-    line("Father's Occupation", document.getElementById("fatherOccupation").value);
-    line("Father Mobile No", document.getElementById("fatherMobile").value);
-    line("Student Mobile No", document.getElementById("mobile").value);
-    line("Email", document.getElementById("email").value);
-    line("Class", document.getElementById("classSelect").value);
-    line("Subjects Interested", document.getElementById("subjects").value);
-    line("Home Address", document.getElementById("address").value);
-
-    y += 10;
-    doc.text("Student's Signature", 15, 260);
-    doc.text("Parent's Signature", 145, 260);
-
-    doc.setTextColor(255, 0, 0);
-    doc.setFontSize(11);
-    doc.text("* Please submit this form to the office offline. *", 15, 272);
-
-    doc.setFillColor(0, 0, 0);
-    doc.rect(10, 280, 190, 7, "F");
-
-    const filename = document.getElementById("name").value || "Join_Form";
-    doc.save(filename + "_Join_Form.pdf");
-
-    // Email submission via Formspree
-    const form = e.target;
-    const formData = new FormData(form);
-
-    try {
-      const response = await fetch(form.action, {
-        method: form.method,
-        body: formData,
-        headers: {
-          'Accept': 'application/json'
-        }
-      });
-
-      if (response.ok) {
-        alert("Form submitted! Email sent successfully.");
-        form.reset();
-        photoPreview.src = "";
-      } else {
-        alert("Failed to send email. Try again later.");
+    if (uploadedPhoto) {
+      try {
+        doc.addImage(uploadedPhoto, 'JPEG', 160, 40, 30, 40);
+      } catch (error) {
+        doc.rect(160, 40, 30, 40);
+        doc.setFontSize(8);
+        doc.text('Photo not available', 165, 65);
       }
-    } catch (error) {
-      alert("Error submitting form.");
+    } else {
+      doc.rect(160, 40, 30, 40);
+      doc.setFontSize(8);
+      doc.text('Paste photo here', 165, 65);
     }
-  });
-</script>
 
+    // ✅ Centered Transparent Stamp
+    const stamp = new Image();
+    stamp.src = 'stamp.png';
+    stamp.onload = () => {
+      doc.addImage(stamp, 'PNG', 70, 120, 70, 70); // Centered & transparent
+      fillTextContent();
+    };
+    stamp.onerror = () => {
+      fillTextContent(); // Continue without stamp
+    };
+
+    function fillTextContent() {
+      let y = 90;
+      doc.setFont('helvetica', 'italic');
+      doc.setFontSize(10);
+      doc.setTextColor(0);
+      doc.text(`Name: ${f['firstName'].value} ${f['surname'].value}`, 20, y); y += 8;
+      doc.text(`Father's Name: ${f['fatherName'].value}`, 20, y); y += 8;
+      doc.text(`Father's Occupation: ${f['fatherOccupation'].value}`, 20, y); y += 8;
+      doc.text(`Mother's Name: ${f['motherName'].value}`, 20, y); y += 8;
+      doc.text(`DOB: ${f['dob'].value}`, 20, y); y += 8;
+      doc.text(`Gender: ${f['gender'].value}`, 20, y); y += 8;
+      doc.text(`Class: ${f['class'].value}`, 20, y); y += 8;
+      doc.text(`Subject: ${f['subject'].value}`, 20, y); y += 8;
+      doc.text(`Mobile: ${f['mobile'].value}`, 20, y); y += 8;
+      doc.text(`Email: ${f['email'].value}`, 20, y); y += 8;
+      const addressLines = doc.splitTextToSize(`Address: ${f['address'].value}`, 130);
+      doc.text(addressLines, 20, y); y += addressLines.length * 6;
+
+      y += 8;
+      doc.text('Parent Sign _____', 20, y);
+      doc.text('Student Sign _____', 120, y);
+      doc.text('Mr. Mohammad S.R', 20, y + 10);
+      doc.setFontSize(8);
+      doc.text('(Founder / Director)', 20, y + 15);
+
+      y = 230;
+      doc.setFillColor(0, 255, 255);
+      doc.rect(15, y, 180, 20, 'F');
+      doc.setFontSize(7);
+      doc.setTextColor(255, 0, 0);
+      doc.text('Note:', 20, y + 5);
+      doc.setTextColor(0);
+      doc.text('Students must adhere to institute\'s code. Mobile phones off.', 30, y + 5);
+      doc.text('Attendance mandatory. Uniform and ID required.', 30, y + 10);
+
+      y = 220;
+      const time = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+      doc.setFontSize(8);
+      doc.setTextColor(0);
+      doc.text(`Admission Time: ${time}`, 20, y);
+
+      doc.save(`${f['firstName'].value}_admission_form.pdf`);
+    }
+  }
+</script>
 </body>
 </html>
