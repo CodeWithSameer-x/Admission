@@ -12,7 +12,6 @@
       margin: 0;
       padding: 0;
     }
-
     .container {
       max-width: 850px;
       margin: 30px auto;
@@ -20,7 +19,6 @@
       border: 3px solid black;
       box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
     }
-
     .header {
       display: flex;
       align-items: center;
@@ -28,30 +26,25 @@
       padding: 10px 20px;
       border-bottom: 2px solid black;
     }
-
     .header img {
       height: 60px;
       width: 60px;
       border-radius: 50%;
       margin-right: 20px;
     }
-
     .header h1 {
       font-size: 26px;
       margin: 0;
       color: black;
     }
-
     form {
       padding: 20px;
     }
-
     label {
       font-weight: bold;
       display: block;
       margin-top: 15px;
     }
-
     input, select, textarea {
       width: 100%;
       padding: 10px;
@@ -59,7 +52,6 @@
       border-radius: 6px;
       border: 1px solid #777;
     }
-
     #photoPreview {
       margin-top: 10px;
       height: 120px;
@@ -68,7 +60,6 @@
       box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
       object-fit: cover;
     }
-
     button {
       margin-top: 20px;
       background: black;
@@ -78,7 +69,6 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
     .note {
       color: red;
       margin-top: 20px;
@@ -94,34 +84,34 @@
     <h1>Vision Institute of Science</h1>
   </div>
 
-  <form id="joinForm" method="POST">
+  <form id="joinForm" action="https://formspree.io/f/myzpwona" method="POST">
     <label>Upload Passport Size Photo (Optional):</label>
     <input type="file" id="photo" accept="image/*" capture="environment" />
     <img id="photoPreview" alt="Preview" />
 
     <label>Full Name:</label>
-    <input type="text" id="name" required />
+    <input type="text" id="name" name="Full Name" required />
 
     <label>Surname:</label>
-    <input type="text" id="surname" required />
+    <input type="text" id="surname" name="Surname" required />
 
     <label>Father's Name:</label>
-    <input type="text" id="fatherName" required />
+    <input type="text" id="fatherName" name="Father's Name" required />
 
     <label>Father's Occupation:</label>
-    <input type="text" id="fatherOccupation" required />
+    <input type="text" id="fatherOccupation" name="Father's Occupation" required />
 
     <label>Father Mobile No:</label>
-    <input type="text" id="fatherMobile" required />
+    <input type="text" id="fatherMobile" name="Father Mobile" required />
 
     <label>Student Mobile No:</label>
-    <input type="text" id="mobile" required />
+    <input type="text" id="mobile" name="Student Mobile" required />
 
     <label>Email:</label>
-    <input type="email" id="email" required />
+    <input type="email" id="email" name="Email" required />
 
     <label>Class:</label>
-    <select id="classSelect" required>
+    <select id="classSelect" name="Class" required>
       <option value="">--Select--</option>
       <option value="9">9</option>
       <option value="10">10</option>
@@ -130,12 +120,12 @@
     </select>
 
     <label>Subjects Interested:</label>
-    <select id="subjects" required>
+    <select id="subjects" name="Subjects Interested" required>
       <option value="">--Select Subject--</option>
     </select>
 
     <label>Home Address:</label>
-    <textarea id="address" rows="2" required></textarea>
+    <textarea id="address" name="Home Address" rows="2" required></textarea>
 
     <button type="submit">Submit & Generate PDF</button>
     <p class="note">Note: Please submit this form to the office offline.</p>
@@ -178,31 +168,28 @@
     }
   });
 
-  document.getElementById("joinForm").addEventListener("submit", function (e) {
+  document.getElementById("joinForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // Main border
     doc.setDrawColor(0, 0, 0);
     doc.setLineWidth(1.5);
     doc.rect(10, 10, 190, 277);
 
-    // Header
-    doc.setFillColor(0, 255, 255); // aqua
+    doc.setFillColor(0, 255, 255);
     doc.rect(10, 10, 190, 20, "F");
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
     doc.text("Vision Institute of Science", 105, 23, { align: "center" });
 
-    // Photo logic
     const photoSrc = photoPreview.src;
     const photoY = 32;
     doc.setDrawColor(0, 0, 0);
-    doc.rect(155, photoY, 40, 50); // box
+    doc.rect(155, photoY, 40, 50);
 
-    if (photoSrc && !photoSrc.includes("undefined")) {
+    if (photoSrc && !photoSrc.includes("undefined") && photoSrc.length > 20) {
       doc.addImage(photoSrc, "JPEG", 155, photoY, 40, 50);
     } else {
       doc.setFontSize(9);
@@ -210,7 +197,6 @@
       doc.text("Paste Photo Here", 175, photoY + 25, { align: "center" });
     }
 
-    // Form content
     doc.setFontSize(12);
     doc.setTextColor(0);
     let y = 45;
@@ -230,23 +216,43 @@
     line("Subjects Interested", document.getElementById("subjects").value);
     line("Home Address", document.getElementById("address").value);
 
-    // Signature
     y += 10;
     doc.text("Student's Signature", 15, 260);
     doc.text("Parent's Signature", 145, 260);
 
-    // Note
     doc.setTextColor(255, 0, 0);
     doc.setFontSize(11);
     doc.text("* Please submit this form to the office offline. *", 15, 272);
 
-    // Footer line
     doc.setFillColor(0, 0, 0);
     doc.rect(10, 280, 190, 7, "F");
 
-    // Save PDF
     const filename = document.getElementById("name").value || "Join_Form";
     doc.save(filename + "_Join_Form.pdf");
+
+    // Email submission via Formspree
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch(form.action, {
+        method: form.method,
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        alert("Form submitted! Email sent successfully.");
+        form.reset();
+        photoPreview.src = "";
+      } else {
+        alert("Failed to send email. Try again later.");
+      }
+    } catch (error) {
+      alert("Error submitting form.");
+    }
   });
 </script>
 
