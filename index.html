@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <title>Join - Vision Institute of Science</title>
@@ -20,12 +19,12 @@
       background: #fff;
       border: 3px solid black;
       box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
-      padding: 0;
-      overflow: hidden;
+      padding: 20px;
     }
 
     .header {
       display: flex;
+      flex-direction: column;
       align-items: center;
       background: aqua;
       padding: 10px 20px;
@@ -33,20 +32,17 @@
     }
 
     .header img {
-      height: 60px;
-      width: 60px;
+      height: 80px;
+      width: 80px;
       border-radius: 50%;
-      margin-right: 20px;
+      margin-bottom: 10px;
     }
 
     .header h1 {
-      font-size: 26px;
+      font-size: 24px;
       margin: 0;
       color: black;
-    }
-
-    form {
-      padding: 20px;
+      text-align: center;
     }
 
     label {
@@ -91,13 +87,13 @@
     }
 
     @media (max-width: 600px) {
-      .header {
-        flex-direction: column;
-        text-align: center;
+      .header h1 {
+        font-size: 18px;
       }
 
-      .header img {
-        margin-bottom: 10px;
+      #photoPreview {
+        height: 100px;
+        width: 80px;
       }
     }
   </style>
@@ -111,34 +107,34 @@
       <h1>Vision Institute of Science</h1>
     </div>
 
-    <form id="joinForm">
+    <form id="joinForm" enctype="multipart/form-data" method="POST">
       <label>Upload Passport Size Photo:</label>
-      <input type="file" id="photo" accept="image/*" capture="environment" required />
+      <input type="file" id="photo" name="photo" accept="image/*" required />
       <img id="photoPreview" />
 
       <label>Full Name:</label>
-      <input type="text" id="name" required />
+      <input type="text" name="Full Name" id="name" required />
 
       <label>Surname:</label>
-      <input type="text" id="surname" required />
+      <input type="text" name="Surname" id="surname" required />
 
       <label>Father's Name:</label>
-      <input type="text" id="fatherName" required />
+      <input type="text" name="Father's Name" id="fatherName" required />
 
       <label>Father's Occupation:</label>
-      <input type="text" id="fatherOccupation" required />
+      <input type="text" name="Father's Occupation" id="fatherOccupation" required />
 
       <label>Father Mobile No:</label>
-      <input type="text" id="fatherMobile" required />
+      <input type="text" name="Father Mobile" id="fatherMobile" required />
 
       <label>Student Mobile No:</label>
-      <input type="text" id="mobile" required />
+      <input type="text" name="Student Mobile" id="mobile" required />
 
       <label>Email:</label>
-      <input type="email" id="email" required />
+      <input type="email" name="Email" id="email" required />
 
       <label>Class:</label>
-      <select id="classSelect" required>
+      <select name="Class" id="classSelect" required>
         <option value="">--Select--</option>
         <option value="9">9</option>
         <option value="10">10</option>
@@ -147,12 +143,14 @@
       </select>
 
       <label>Subjects Interested:</label>
-      <select id="subjects" required>
+      <select name="Subject Interested" id="subjects" required>
         <option value="">--Select Subject--</option>
       </select>
 
       <label>Home Address:</label>
-      <textarea id="address" rows="2" required></textarea>
+      <textarea name="Home Address" id="address" rows="2" required></textarea>
+
+      <input type="hidden" name="_subject" value="New Join Form Submission">
 
       <button type="submit">Submit & Generate PDF</button>
       <p class="note">Note: Please submit this form to the office offline.</p>
@@ -201,18 +199,21 @@
     document.getElementById("joinForm").addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      // Send form to Formspree
+      // 1. Send to Formspree
       const formData = new FormData(this);
       fetch("https://formspree.io/f/myzpwona", {
         method: "POST",
         body: formData,
         headers: { Accept: "application/json" }
       }).then(res => {
-        if (res.ok) alert("Form submitted! PDF will now download.");
-        else alert("Error sending form.");
+        if (res.ok) {
+          alert("Form submitted! PDF will now download.");
+        } else {
+          alert("Error sending form.");
+        }
       });
 
-      // Generate PDF
+      // 2. Generate PDF
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
@@ -228,7 +229,6 @@
 
       const photoY = 32;
       if (photoPreview.src) {
-        doc.setDrawColor(0, 0, 0);
         doc.rect(155, photoY, 40, 50);
         doc.addImage(photoPreview.src, "JPEG", 155, photoY, 40, 50);
       }
@@ -268,5 +268,5 @@
   </script>
 
 </body>
-
 </html>
+
