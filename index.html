@@ -34,6 +34,7 @@
     button:hover { background-color: #0055aa; }
     #downloadSection { display: none; text-align: center; margin-top: 20px; }
     .error { color: red; font-size: 12px; margin-bottom: 10px; display: none; }
+    #formMessage { color: green; font-size: 14px; margin-bottom: 10px; display: none; }
   </style>
 </head>
 <body>
@@ -46,12 +47,11 @@
     </div>
   </header>
 
-  <!-- ✅ Formspree Email Integration -->
   <form id="studentForm" method="POST" action="https://formspree.io/f/myzpwona">
     <label for="firstName">First Name:</label>
-    <input type="text" id="firstName" name="firstName" required>
+    <input type="text" id="firstName" name="firstName" placeholder="Enter your given name" required>
     <label for="surname">Surname:</label>
-    <input type="text" id="surname" name="surname" required>
+    <input type="text" id="surname" name="surname" placeholder="Enter your family name" required>
     <label for="fatherName">Father's Name:</label>
     <input type="text" id="fatherName" name="fatherName" required>
     <label for="fatherOccupation">Father's Occupation:</label>
@@ -93,6 +93,7 @@
     <div style="text-align: center;">
       <button type="button" onclick="document.getElementById('photoUpload').click();">Upload Photo</button>
     </div><br>
+    <div id="formMessage"></div>
     <button type="submit">Submit & Notify</button>
   </form>
 </div>
@@ -110,6 +111,7 @@
   const photoPreview = document.getElementById('photoPreview');
   const mobileError = document.getElementById('mobileError');
   const emailError = document.getElementById('emailError');
+  const formMessage = document.getElementById('formMessage');
   let uploadedPhoto = null;
 
   const subjectsByClass = {
@@ -144,31 +146,101 @@
     }
   });
 
-  form.addEventListener('submit', function (e) {
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault(); // Prevent default form submission
+
     const mobile = form.elements['mobile'].value;
     const email = form.elements['email'].value;
 
     mobileError.style.display = 'none';
     emailError.style.display = 'none';
+    formMessage.style.display = 'none';
 
+    // Validate mobile number
     if (!/^[0-9]{10}$/.test(mobile)) {
-      e.preventDefault();
       mobileError.style.display = 'block';
       return;
     }
+
+    // Validate email
     if (!email.endsWith('@gmail.com')) {
-      e.preventDefault();
       emailError.style.display = 'block';
       return;
     }
 
-    document.getElementById('downloadSection').style.display = 'block';
+    // Validate all required fields
+    const requiredFields = ['firstName', 'surname', 'fatherName', 'fatherOccupation', 'motherName', 'dob', 'gender', 'class', 'subject', 'mobile', 'email', 'address'];
+    let allFieldsFilled = true;
+    for (const field of requiredFields) {
+      if (!form.elements[field].value) {
+        allFieldsFilled = false;
+        formMessage.style.display = 'block';
+        formMessage.style.color = 'red';
+        formMessage.textContent = 'Please fill all required fields.';
+        return;
+      }
+    }
+
+    // Prepare form data for Formspree
+    const formData = new FormData(form);
+    formData.delete('photoUpload'); // Remove file input as Formspree doesn't support it
+
+    try {
+      const response = await fetch('https://formspree.io/f/myzpwona', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        formMessage.style.display = 'block';
+        formMessage.style.color = 'green';
+        formMessage.textContent = 'Form submitted successfully!';
+        document.getElementById('downloadSection').style.display = 'block';
+        // Do not reset form immediately to allow PDF generation with filled data
+      } else {
+        formMessage.style.display = 'block';
+        formMessage.style.color = 'red';
+        formMessage.textContent = 'Error submitting form. Please try again.';
+      }
+    } catch (error) {
+      formMessage.style.display = 'block';
+      formMessage.style.color = 'red';
+      formMessage.textContent = 'Network error. Please check your connection and try again.';
+    }
   });
 
   async function generatePDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const f = form.elements;
+
+    // Validate all required fields before generating PDF
+    const requiredFields = ['firstName', 'surname', 'fatherName', 'fatherOccupation', 'motherName', 'dob', 'gender', 'class', 'subject', 'mobile', 'email', 'address'];
+    for (const field of requiredFields) {
+      if (!f[field].value) {
+        formMessage.style.display = 'block';
+        formMessage.style.color = 'red';
+        formMessage.textContent = 'Please fill all required fields before downloading PDF.';
+        return;
+      }
+    }
+
+    // Validate mobile and email again for PDF generation
+    if (!/^[0-9]{10}$/.test(f['mobile'].value)) {
+      formMessage.style.display = 'block';
+      formMessage.style.color = 'red';
+      formMessage.textContent = 'Mobile number must be 10 digits.';
+      return;
+    }
+    if (!f['email'].value.endsWith('@gmail.com')) {
+      formMessage.style.display = 'block';
+      formMessage.style.color = 'red';
+      formMessage.textContent = 'Email must end with @gmail.com.';
+      return;
+    }
 
     doc.setDrawColor(0, 0, 0);
     doc.rect(10, 10, 190, 275);
@@ -195,15 +267,21 @@
       doc.text('Paste photo here', 165, 65);
     }
 
-    // ✅ Centered Transparent Stamp
     const stamp = new Image();
     stamp.src = 'stamp.png';
     stamp.onload = () => {
-      doc.addImage(stamp, 'PNG', 70, 120, 70, 70); // Centered & transparent
+      try {
+        doc.addImage(stamp, 'PNG', 70, 120, 70, 70);
+      } catch (error) {
+        console.error('Failed to add stamp image:', error);
+      }
       fillTextContent();
     };
     stamp.onerror = () => {
-      fillTextContent(); // Continue without stamp
+      console.warn('Stamp image not found or failed to load.');
+      doc.setFontSize(8);
+      doc.text('Stamp not available', 70, 120);
+      fillTextContent();
     };
 
     function fillTextContent() {
@@ -211,7 +289,7 @@
       doc.setFont('helvetica', 'italic');
       doc.setFontSize(10);
       doc.setTextColor(0);
-      doc.text(`Name: ${f['firstName'].value} ${f['surname'].value}`, 20, y); y += 8;
+      doc.text(`Name: ${f['surname'].value} ${f['firstName'].value}`, 20, y); y += 8;
       doc.text(`Father's Name: ${f['fatherName'].value}`, 20, y); y += 8;
       doc.text(`Father's Occupation: ${f['fatherOccupation'].value}`, 20, y); y += 8;
       doc.text(`Mother's Name: ${f['motherName'].value}`, 20, y); y += 8;
@@ -247,7 +325,13 @@
       doc.setTextColor(0);
       doc.text(`Admission Time: ${time}`, 20, y);
 
-      doc.save(`${f['firstName'].value}_admission_form.pdf`);
+      doc.save(`${f['surname'].value}_${f['firstName'].value}_admission_form.pdf`);
+
+      // Reset form after PDF download
+      form.reset();
+      photoPreview.innerHTML = 'Paste photo here';
+      uploadedPhoto = null;
+      document.getElementById('downloadSection').style.display = 'none';
     }
   }
 </script>
